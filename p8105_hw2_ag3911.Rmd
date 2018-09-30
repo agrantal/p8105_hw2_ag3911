@@ -17,7 +17,7 @@ subway_data = read_csv("./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
 subway_data
 ```
-This dataset contains the following variables: line, station name, station latitude/longitude, which of the 11 routes are served, entry (true/false), vending (yes/no), entrance type (elevator, stair, door), and ADA compliance (true/false). I omitted unnecessary variables using 'select' and recoded the entry variable from character to logical using 'mutate' and 'recode'. The resulting dataset is 1,868 rows x 19 columns. The data are not perfectly tidy but/because.....
+This dataset contains the following variables: line, station name, station latitude/longitude, which of the 11 routes are served, entry (true/false), vending (yes/no), entrance type (elevator, stair, door), and ADA compliance (true/false). I omitted unnecessary variables using 'select' and recoded the entry variable from character to logical using 'mutate' and 'recode'. The resulting dataset is 1,868 rows x 19 columns. The data are not tidy because there are 11 variables for route when there should only be 2: one for the total number of routes and one for the route's identifying letter/number. 
 
 
 ##Q1: How many distinct stations are there? 
@@ -36,7 +36,7 @@ nrow(distinct(subway_data, station_name, line))
 ```{r}
 subway_data %>%
     filter(ada == "TRUE") %>%
-    group_by(station_name, line, ada) %>%
+    count(station_name, line, ada) %>%
     summarise(n = n())
 ```
 84 stations are ADA compliant. 
@@ -46,11 +46,20 @@ subway_data %>%
 ```{r}
 subway_data %>%
     filter(vending == "NO") %>%
-    summarise(n = n())
+    summarise(vend_n = n())
 # 183
+
 subway_data %>%
-    filter(vending == "NO", entry == "TRUE" ) %>%
-    summarise(n = n())
+    group_by(vending) %%
+    #filter(vending == "NO") %>%
+    summarise(no_vend = n()) 
+    #filter(vending == "NO", entry == "TRUE" ) %>%
+    group_by(vending, entry) %>%
+    summarise(vend_entr_n = n()) %>%
+    mutate(prop = vend_entr_n/vend_n)
+
+vend_entr_n / vend_n
+
 # 69
 ```
 There are 183 stations without vending and of those 69 allow entrance, so 69/183. 
@@ -59,14 +68,25 @@ There are 183 stations without vending and of those 69 allow entrance, so 69/183
 
 ##Q4: After reformatting the data so that route number and route name are distinct variables, how many distinct stations serve the A train?
 ```{r}
-subway_data %>%
-    filter (ada == "TRUE") %>%
-    group_by(station_name, line, ada) %>%
+tidy_subway_data = gather(subway_data, key = route_num, value = route_name, route1:route11)
+# how to do this with nested %>% code? also, can't I now delete the route_num bc seems to have no purpose? 
+
+tidy_subway_data %>%
+    filter(route_name == "A") %>%
+    count(station_name, line, route_name) %>%
     summarise(n = n())
 ```
+There are 60 distinct stations that serve the A train.
 
 ##Q5: After reformatting the data so that route number and route name are distinct variables,  how many are ADA compliant? 
 
+```{r}
+tidy_subway_data %>%
+    filter(ada == "TRUE") %>%
+    count(station_name, line, ada) %>%
+    summarise(n = n())
+```
+There are 84 distinct stations that are ADA compliant. 
 
 
 #Problem 2: Mr. Trashwheel 
