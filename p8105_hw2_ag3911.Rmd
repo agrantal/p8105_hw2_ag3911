@@ -106,6 +106,31 @@ as.integer(trash_data, "sports_balls")
 *omit rows without precipitation data and add a variable year
 *combine datasets and convert month to a character variable, use the variable 'month.name'
 ```{r}
+precip_16_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2016 Precipitation", skip = 2, col_names = FALSE) %>%
+  janitor::clean_names() %>%
+  rename(month = x_1, total_precip = x_2) %>%
+  filter(month != "NA", total_precip != "NA") %>%
+  mutate(year = 16) 
+  
+precip_17_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2017 Precipitation", skip = 2, col_names = FALSE) %>%
+  janitor::clean_names() %>%
+  rename(month = x_1, total_precip = x_2) %>%
+  mutate(year = 17) %>%
+  filter(month != "NA", total_precip != "NA")
+
+precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
+  mutate(month.name = as.character(month))
+
+
+#is this what the joined dataset is supposed to look like? then, how do i relabel month to words instead of numbers?? also, should I remove the variable year and add the year info to the total to make it read "2016 total precip" ??
+
+
+  factor(month.name[MM], levels=month.name[1:12])
+  
+  transform(month, c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"))
+
+
+
 ```
 
 ###In a paragraph (use inline R), note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016?
