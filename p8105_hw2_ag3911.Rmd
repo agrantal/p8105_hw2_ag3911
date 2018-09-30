@@ -21,16 +21,10 @@ This dataset contains the following variables: line, station name, station latit
 
 
 ##Q1: How many distinct stations are there? 
-The first method I used to answer this was using 'group_by' and 'summarise'. This method generates 465 rows, each of which represents the number of distinct stations.
-```{r}
-subway_data %>%
-    group_by(station_name, line) %>%
-    summarise(n = n_distinct())
-```
-The second method I used to answer this (to confirm the results of my first method) was using 'nrow(distinct())'. This method generated the same answer: 465 distinct stations. 
 ```{r}
 nrow(distinct(subway_data, station_name, line))
 ```
+There are 465 distinct stations. 
 
 ##Q2: How many stations are ADA compliant?
 ```{r}
@@ -91,33 +85,26 @@ There are 84 distinct stations that are ADA compliant.
 
 #Problem 2: Mr. Trashwheel 
 
-##Read and Clean Data
+##Read and Clean Mr. Trashwheel Sheet Data 
+*specify the sheet in the Excel file
+*omit columns containing notes
+*omit rows that do not include dumpster-specific data
+*round the number of sports balls to the nearest integer and convert the result to an integer variable (using as.integer)
+
 ```{r}
+library(readxl)
+trash_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
+  janitor::clean_names() %>%
+  round(sports_balls) %>% 
+  filter(dumpster != "NA") 
+  
+# how to convert from decimal to integer and change data type? it can't find object sports_balls!!!??
+as.integer(trash_data, "sports_balls")
 ```
 
-###specify the sheet in the Excel file and to omit columns containing notes (using the range argument and cell_cols() function)
-```{r}
-```
-
-###omit rows that do not include dumpster-specific data
-```{r}
-```
-
-###round the number of sports balls to the nearest integer and converts the result to an integer variable (using as.integer)
-```{r}
-```
-
-
-##Read and Clean Precipitation Data for 2016 and 2017
-```{r}
-```
-
-###For each year, omit rows without precipitation data and add a variable year.
-```{r}
-```
-
-###For each year, combine datasets and convert month to a character variable
-use the variable 'month.name' which is built into R
+##Read and Clean 2016 and 2017 Precipitation Sheets Data 
+*omit rows without precipitation data and add a variable year
+*combine datasets and convert month to a character variable, use the variable 'month.name'
 ```{r}
 ```
 
