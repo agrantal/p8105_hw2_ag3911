@@ -117,51 +117,51 @@ The edited trash dataset has dimensions `r dim(trash_data)`. The joined and edit
 #Problem 3: Behavioral Risk Factors Surveillance System (BRFSS) for Selected Metropolitan Area Risk Trends (SMART), 2002-2010 
 
 ##Read and Clean BRFSS data
+*format the data to use appropriate variable names
+*exclude variables for class, topic, question, sample size, and everything from lower confidence limit to GeoLocation
+*structure data so that responses (excellent to poor) are variables taking the value of Data_value
+*create a new variable showing the proportion of responses that were “Excellent” or “Very Good”
 ```{r}
 install.packages("devtools", force = TRUE)
 devtools::install_github("p8105/p8105.datasets")
 
 library(p8105.datasets)
-data(brfss_smart2010)
+library(tidyverse)
+brfss <- brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  select(year, locationdesc, topic, response, data_value) %>%
+  filter(topic == "Overall Health") %>%
+  select(-topic) %>%
+  rename("Overall Health Score" = data_value) %>%
+  separate(locationdesc, into = c("state", "county"), sep = "-") %>% #instead of keeping     locationabbr, separate locationdesc into two columns: one with state and one with county 
+  spread(key = response, value = "Overall Health Score")
+
+mutate(brfss, "Very Good" = as.numeric("Very Good")) 
+mutate(brfss, Good = as.numeric(Good))
+mutate(brfss, Fair = as.numeric(Fair))
+mutate(brfss, Poor = as.numeric(Poor))
+mutate(brfss, Excellent = as.numeric(Excellent))
+
+# how to make proportional var ??
+# how to rearrange order to list (left to right) excellent, very good, good, fair, poor ??
 ```
 
-###format the data to use appropriate variable names
+##Q1: How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
 ```{r}
 
 ```
 
-###exclude variables for class, topic, question, sample size, and everything from lower confidence limit to GeoLocation
+##Q2: In 2002, what is the median of the “Excellent” response value?
 ```{r}
 
 ```
 
-###structure data so that responses (excellent to poor) are variables taking the value of Data_value
+##Q3: Make a histogram of “Excellent” response values in the year 2002.
 ```{r}
 
 ```
 
-###create a new variable showing the proportion of responses that were “Excellent” or “Very Good”
-```{r}
-
-```
-
-
-##How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
-```{r}
-
-```
-
-##In 2002, what is the median of the “Excellent” response value?
-```{r}
-
-```
-
-##Make a histogram of “Excellent” response values in the year 2002.
-```{r}
-
-```
-
-##Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
+##Q4: Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
 ```{r}
 
 ```
