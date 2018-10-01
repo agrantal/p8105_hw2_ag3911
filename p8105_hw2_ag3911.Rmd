@@ -82,11 +82,8 @@ Of the stations that serve the A train, 17 are ADA compliant.
 library(readxl)
 trash_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
   janitor::clean_names() %>%
-  round(sports_balls) %>% 
-  filter(dumpster != "NA") 
-  
-# how to convert from decimal to integer and change data type? it can't find object sports_balls!!!??
-as.integer(trash_data, "sports_balls")
+  filter(dumpster != "NA") %>%
+  mutate(sports_balls = as.integer(sports_balls)) 
 ```
 
 ##Read and Clean 2016 and 2017 Precipitation Sheets Data 
@@ -106,23 +103,14 @@ precip_17_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals201
   filter(month != "NA", total_precip != "NA")
 
 precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
-  mutate(month.name = as.character(month))
-
-
-#is this what the joined dataset is supposed to look like? then, how do i relabel month to words instead of numbers?? also, should I remove the variable year and add the year info to the total to make it read "2016 total precip" ??
-
-
-  factor(month.name[MM], levels=month.name[1:12])
-  
-  transform(month, c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"))
-
-
-
+  mutate(month = month.name[month]) %>%
+  rename(total_precip_17 = total_precip.x) %>%
+  rename(total_precip_16 = total_precip.y) %>%
+  select(-year.x, -year.y)
 ```
 
-###In a paragraph (use inline R), note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016?
-```{r}
-```
+###In a paragraph (use inline R), note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016? 
+The edited trash dataset has dimensions `r dim(trash_data)`. The joined and edited precipitation dataset has dimensions `r  dim(precip_joined)`. The total precipitation in 2017 was `r sum(precip_joined$total_precip_17)`. The median of number of sports balls in a dumpster in 2016 was `r median(trash_data$sports_balls)`. 
 
 
 
@@ -130,41 +118,52 @@ precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
 
 ##Read and Clean BRFSS data
 ```{r}
-# install.packages("devtools")
+install.packages("devtools", force = TRUE)
 devtools::install_github("p8105/p8105.datasets")
+
+library(p8105.datasets)
+data(brfss_smart2010)
 ```
 
 ###format the data to use appropriate variable names
 ```{r}
+
 ```
 
 ###exclude variables for class, topic, question, sample size, and everything from lower confidence limit to GeoLocation
 ```{r}
+
 ```
 
 ###structure data so that responses (excellent to poor) are variables taking the value of Data_value
 ```{r}
+
 ```
 
 ###create a new variable showing the proportion of responses that were “Excellent” or “Very Good”
 ```{r}
+
 ```
 
 
 ##How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
 ```{r}
+
 ```
 
 ##In 2002, what is the median of the “Excellent” response value?
 ```{r}
+
 ```
 
 ##Make a histogram of “Excellent” response values in the year 2002.
 ```{r}
+
 ```
 
 ##Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
 ```{r}
+
 ```
 
 
