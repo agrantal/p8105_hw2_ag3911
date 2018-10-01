@@ -153,28 +153,37 @@ brfss$prop = brfss$ex_or_vg_num/brfss$ex_or_vg_denom
 remove(brfss$`ex_or_vg_denom`, brfss$`ex_or_vg_num`)
 ```
 
-##Q1: How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
+##Q1: How many unique locations are included in the dataset?  
 ```{r}
 brfss %>%
   count(county) %>%
-  summarise(n = n()) %>%
+  summarise(n = n()) 
 
 brfss %>%
   count(state, county) %>%
   summarise(n = n())
 ```
+There are 351 unique locations. 
 
-##Q2: In 2002, what is the median of the “Excellent” response value?
+##Q2: Is every state represented?
+```{r}
+```
+
+##Q3: What state is observed the most?
+```{r}
+```
+
+##Q4: In 2002, what is the median of the “Excellent” response value?
 ```{r}
 
 ```
 
-##Q3: Make a histogram of “Excellent” response values in the year 2002.
+##Q5: Make a histogram of “Excellent” response values in the year 2002.
 ```{r}
 
 ```
 
-##Q4: Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
+##Q6: Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
 ```{r}
 
 ```
