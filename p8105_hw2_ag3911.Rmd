@@ -155,19 +155,15 @@ remove(brfss$`ex_or_vg_denom`, brfss$`ex_or_vg_num`)
 
 ##Q1: How many unique locations are included in the dataset?  
 ```{r}
-brfss %>%
-  count(county) %>%
-  summarise(n = n()) 
-
-brfss %>%
-  count(state, county) %>%
-  summarise(n = n())
+length(unique(brfss$county))
 ```
 There are 351 unique locations. 
 
 ##Q2: Is every state represented?
 ```{r}
+length(unique(brfss$state))
 ```
+Yes. There are 51 states represented, including Washington D.C.
 
 ##Q3: What state is observed the most?
 ```{r}
