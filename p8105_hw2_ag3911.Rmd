@@ -29,8 +29,8 @@ There are 465 distinct stations.
 ##Q2: How many stations are ADA compliant?
 ```{r}
 subway_data %>%
-    filter(ada == "TRUE") %>%
-    count(station_name, line, ada) %>%
+    count(station_name, line, ada) %>% #selecting distinct stations
+    filter(ada == "TRUE") %>% #filtering for ADA compliance
     summarise(n = n())
 ```
 84 stations are ADA compliant. 
@@ -38,25 +38,10 @@ subway_data %>%
 
 ##Q3: What proportion of station entrances / exits without vending allow entrance?
 ```{r}
-subway_data %>%
-    filter(vending == "NO") %>%
-    summarise(vend_n = n())
-# 183
-
-subway_data %>%
-    group_by(vending) %%
-    #filter(vending == "NO") %>%
-    summarise(no_vend = n()) 
-    #filter(vending == "NO", entry == "TRUE" ) %>%
-    group_by(vending, entry) %>%
-    summarise(vend_entr_n = n()) %>%
-    mutate(prop = vend_entr_n/vend_n)
-
-vend_entr_n / vend_n
-
-# 69
+vending = filter(subway_data, vending == "NO")
+mean(vending$entry == "TRUE")
 ```
-There are 183 stations without vending and of those 69 allow entrance, so 69/183. 
+37.7% of station entrances/exits without vending allow entrance. 
 
 ##Reformat data so that route number and route name are distinct variables
 
@@ -64,23 +49,25 @@ There are 183 stations without vending and of those 69 allow entrance, so 69/183
 ```{r}
 tidy_subway_data = gather(subway_data, key = route_num, value = route_name, route1:route11)
 # how to do this with nested %>% code? also, can't I now delete the route_num bc seems to have no purpose? 
+tidy_subway_data
 
 tidy_subway_data %>%
-    filter(route_name == "A") %>%
     count(station_name, line, route_name) %>%
+    filter(route_name == "A") %>%
     summarise(n = n())
 ```
 There are 60 distinct stations that serve the A train.
 
-##Q5: After reformatting the data so that route number and route name are distinct variables,  how many are ADA compliant? 
+##Q5: After reformatting the data so that route number and route name are distinct variables, of the distinct stations that serve the A train, how many are ADA compliant? 
 
 ```{r}
 tidy_subway_data %>%
+    count(station_name, line, route_name, ada) %>%
+    filter(route_name == "A") %>%
     filter(ada == "TRUE") %>%
-    count(station_name, line, ada) %>%
     summarise(n = n())
 ```
-There are 84 distinct stations that are ADA compliant. 
+Of the stations that serve the A train, 17 are ADA compliant. 
 
 
 #Problem 2: Mr. Trashwheel 
@@ -143,6 +130,8 @@ precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
 
 ##Read and Clean BRFSS data
 ```{r}
+# install.packages("devtools")
+devtools::install_github("p8105/p8105.datasets")
 ```
 
 ###format the data to use appropriate variable names
