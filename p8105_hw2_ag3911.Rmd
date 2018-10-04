@@ -71,41 +71,37 @@ Of the stations that serve the A train, 17 are ADA compliant.
 *Specify the sheet in the Excel file. Omit columns containing notes. Omit rows that do not include dumpster-specific data. Round the number of sports balls to the nearest integer and convert the result to an integer variable (using as.integer).*
 ```{r}
 library(readxl)
-trash_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
+trash_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
   janitor::clean_names() %>%
-  filter(dumpster != "NA" & dumpster != 23220) %>%
+  filter(dumpster != "NA") %>%
   mutate(sports_balls = as.integer(sports_balls)) 
 ```
 
 ## Read and Clean 2016 and 2017 Precipitation Sheets Data 
 *Omit rows without precipitation data and add a variable year. Combine datasets and convert month to a character variable, use the variable 'month.name'.*
 ```{r}
-precip_16_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2016 Precipitation", skip = 2, col_names = FALSE) %>%
+precip_16_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", skip = 2, col_names = FALSE) %>%
   janitor::clean_names() %>%
   rename(month = x_1, total_precip = x_2) %>%
   filter(month != "NA", total_precip != "NA") %>%
   mutate(year = 16) 
   
-precip_17_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2017 Precipitation", skip = 2, col_names = FALSE) %>%
+precip_17_data = readxl::read_excel("./hw2 data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", skip = 2, col_names = FALSE) %>%
   janitor::clean_names() %>%
   rename(month = x_1, total_precip = x_2) %>%
   mutate(year = 17) %>%
   filter(month != "NA", total_precip != "NA")
 
 #This is the less tidy but more useful presentation of the data: 
-precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
-  mutate(month = month.name[month]) %>%
-  rename(total_precip_17 = total_precip.x) %>%
-  rename(total_precip_16 = total_precip.y) %>%
-  select(-year.x, -year.y)
+#precip_joined = left_join(precip_17_data, precip_16_data, by = "month") %>%
+  #mutate(month = month.name[month]) %>%
+  #rename(total_precip_17 = total_precip.x) %>%
+  #rename(total_precip_16 = total_precip.y) %>%
+  #select(-year.x, -year.y)
 
 #This is the tidier (although less visually pleasing) way to organize the data:
 precip_bind = bind_rows(precip_17_data, precip_16_data) %>%
   mutate(month = month.name[month]) 
-
-precip_bind %>%
-    filter(year == 17) %>%
-    summarize(sum(total_precip))
 ```
 
 The edited trash dataset has dimensions `r dim(trash_data)`. The joined and edited precipitation dataset has dimensions `r  dim(precip_bind)`. The total precipitation in 2017 was `r precip_bind %>% filter(year == 17) %>% summarize(sum(total_precip))`. The median of number of sports balls in a dumpster in 2016 was `r median(trash_data$sports_balls)`. 
